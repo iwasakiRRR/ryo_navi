@@ -1,0 +1,29 @@
+#include "ryo_navi/ryo_navi.hpp"
+navi::navi(){
+	x = 0;
+	y = 0;
+	z = 0;
+	//ac("move_base", true);
+}
+
+void navi::init(){
+	ac_.reset(new MoveBaseClient(n, "move_base", &callback_queue)); 
+	gh_.reset();
+	std::cout<<"座標を入力してください"<<std::endl;
+	std::cout<<"x = "<<std::endl;
+	std::cin >> x;
+	std::cout<<"y = "<<std::endl;
+	std::cin >> y;	
+}
+void navi::navigation(){
+	goal.target_pose.pose.position.x = x; 
+	goal.target_pose.pose.position.y = y;
+	goal.target_pose.header.frame_id = "map";
+	goal.target_pose.header.stamp = ros::Time::now();
+	
+	quat = tf::createQuaternionMsgFromYaw(1);
+	goal.target_pose.pose.orientation = quat;
+	//tf::Quaternion(0,0,0,0);
+	gh_ = ac_-> sendGoal(goal);
+	
+}
